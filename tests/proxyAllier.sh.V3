@@ -1,0 +1,218 @@
+#!/bin/bash
+
+#
+#	proxy.sh
+#
+#	Auteur	: JHB
+#
+#	Version	: 3.1.8 - 08 juillet 2019
+#
+#	Description	: Mise en place ou retrait des paramètres proxy en fonction de la classe d'adresse
+#				  Testé sur Fedora 29/Gnome 3
+#
+#	Attention : le script est lancé par root 
+#
+
+# Constantes de l'application
+#
+
+# moi / mon nom de login !!!
+ME="jhb"
+
+TEMP_SCRIPT="/etc/scripts/_temp.sh"
+
+# Paramètres du proxy
+#
+PROXY_HOST="150.1.10.121"
+PROXY_PORT="3128"
+PROXY_USER="henry-barnaudiere.j"
+PROXY_PWD="Capucine_5803"
+
+# Classe des IP profesionnelles
+PRO_IP="150."
+
+#
+# Commandes à exécuter
+#
+
+# Mise en place du proxy 
+#
+
+# ... pour la mise en place du proxy par root
+CMD_PROXY_ROOT=(
+	"cp /etc/dnf/dnf.conf.proxy /etc/dnf/dnf.conf" 
+	)
+
+# ... pour la mise en place du proxy par l'utilisateur
+CMD_PROXY_USER=(
+	"dropbox proxy \"manual\" \"http\" $PROXY_HOST $PROXY_PORT $PROXY_USER $PROXY_PWD" 
+	"cp ~/.gitconfig.proxy ~/.gitconfig"
+	"cp ~/.config/evolution/sources/system-proxy.source.proxy ~/.config/evolution/sources/system-proxy.source"
+	"gsettings set org.gnome.system.proxy mode 'manual'"
+	"gsettings set org.gnome.system.proxy.http host $PROXY_HOST"
+	"gsettings set org.gnome.system.proxy.http port $PROXY_PORT"
+	"gsettings set org.gnome.system.proxy.http authentication-user $PROXY_USER"
+	"gsettings set org.gnome.system.proxy.http authentication-password $PROXY_PWD"  
+	"gsettings set org.gnome.system.proxy.https host $PROXY_HOST"
+	"gsettings set org.gnome.system.proxy.https port $PROXY_PORT"	
+	"gsettings set org.gnome.system.proxy ignore-hosts \"['localhost', '127.0.0.0/8', '::1', 'gestor-p-web0.cg03.local', 'segallier.intranet.cd03.fr', 'casarray.cg03.local', 'bpmt.cg03.local', 'organigramme.allier.fr' , 'no031.cg03.local']\" "
+	)
+
+#	Retrait du proxy
+#
+
+# ... ou pour le retrait du proxy par root
+CMD_NOPROXY_ROOT=(
+	"cp /etc/dnf/dnf.conf.noproxy /etc/dnf/dnf.conf"
+	)
+
+# ... ou pour le retrait du proxy
+CMD_NOPROXY_USER=(
+	"dropbox proxy \"none\"" 
+	"cp ~/.config/evolution/sources/system-proxy.source.noproxy ~/.config/evolution/sources/system-proxy.source"
+	"rm ~/.gitconfig"
+	"gsettings set org.gnome.system.proxy mode 'none'"
+	)
+
+# Traitements ...
+#
+echo "Lancement des traitements"
+
+# Adresse IP du poste
+#
+# myIP=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+
+# L'adresse IPV4 est la deuxième "valeur" affichée
+myIP=$(ifconfig | grep "inet $PRO_IP" | awk '{print $2}' | cut -f 2 )
+myIPLen=${#myIP}
+
+if [ -f "$TEMP_SCRIPT" ]; then
+	echo "Suppression du script temporaire"
+	rm $TEMP_SCRIPT
+fi
+
+# Adresse professionnelle ?
+#if [ ${myIP:0:$PRO_IP_LENGTH} = ${PRO_IP:0:$PRO_IP_LENGTH} ]; then
+if [ "$myIPLen" -gt 0 ]; then
+	echo "Adresse du poste : $myIP"
+	echo "Réseau professionnel - Installation du proxy"
+	
+	# Commandes exécutées par root
+	cmdCount=${#CMD_PROXY_ROOT[@]}
+	if [ $cmdCount -gt 0 ]; then
+		echo "$cmdCount commande(s) à éxécuter en tant que root"
+		for i in `seq 1 $cmdCount`
+		do
+			let "index = $i-1"
+			eval ${CMD_PROXY_ROOT[$index]}
+		done
+	else
+		echo "Pas de commande à éxecuter par root"
+	fi
+
+	# puis par l'utilisateur => génération d'un script
+	cmdCount=${#CMD_PROXY_USER[@]}
+	if [ $cmdCount -gt 0 ]; then
+		echo "$cmdCount commande(s) supplémentaire(s) à éxécuter"
+		for i in `seq 1 $cmdCount`
+		do
+			let "index = $i-1"
+
+			# Si la commande est liée à dropbox, on peut attendre 1s.,
+			# le temps pour le daemon de prendre en compte la modification
+			if [[ ${CMD_PROXY_USER[$index]} == *"dropbox"* ]]; then
+				echo "#!/bin/bash" >> $TEMP_SCRIPT
+				echo "output=\"\$(${CMD_PROXY_USER[$index]})\"" >> $TEMP_SCRIPT
+				echo "if [ \"\$output\" != \"Dropbox is\'nt running!\" ]; then" >> $TEMP_SCRIPT
+				echo "still=10" >> $TEMP_SCRIPT
+				echo "echo 'Dropbox => on attend un peu ...'"  >> $TEMP_SCRIPT
+				echo "while [ \"\$output\" != \"set\" ] && [ \$still -ne 0 ];do" >> $TEMP_SCRIPT
+				echo "echo 'on attend encore un peu ...'"  >> $TEMP_SCRIPT
+				echo "((still--))" >> $TEMP_SCRIPT
+				echo "sleep 1s" >> $TEMP_SCRIPT
+				echo "output=\"\$(${CMD_PROXY_USER[$index]})\"" >> $TEMP_SCRIPT
+				echo "done"  >> $TEMP_SCRIPT
+				echo "if [ \$still -eq 0 ]; then" >> $TEMP_SCRIPT
+				echo "echo \"Impossible d'arrêter Dropbox\"" >> $TEMP_SCRIPT
+				echo "fi" >> $TEMP_SCRIPT
+				echo "else"  >> $TEMP_SCRIPT
+				echo "dropbox start" >> $TEMP_SCRIPT
+				echo "${CMD_PROXY_USER[$index]}" >> $TEMP_SCRIPT
+				echo "fi"  >> $TEMP_SCRIPT
+				echo "echo 'Dropbox est paramétré ...'"  >> $TEMP_SCRIPT
+			else
+				echo "${CMD_PROXY_USER[$index]}" >> $TEMP_SCRIPT
+			fi
+		done
+
+		# Lancement du script
+		su $ME $TEMP_SCRIPT
+	else
+		echo "Pas de commande supplémentaire à éxecuter"
+	fi
+else
+	echo "Réseau domestique - Retrait du proxy"
+	
+	# Commandes exécutées par root
+	cmdCount=${#CMD_NOPROXY_ROOT[@]}
+	if [ $cmdCount -gt 0 ]; then
+		echo "$cmdCount commande(s) à éxécuter en tant que root"
+		
+		for i in `seq 1 $cmdCount`
+		do
+			let "index = $i-1"
+			eval ${CMD_NOPROXY_ROOT[$index]}
+		done
+	else
+		echo "Pas de commande à éxecuter"
+	fi
+
+	# puis par l'utilisateur => génération d'un script
+	cmdCount=${#CMD_NOPROXY_USER[@]}
+	if [ $cmdCount -gt 0 ]; then
+		echo "$cmdCount commande(s) supplémentaire(s) à éxécuter"
+		
+		for i in `seq 1 $cmdCount`
+		do
+			let "index = $i-1"
+
+			# Si la commande est liée à dropbox, on peut attendre quelques sec.,
+			# le temps pour le daemon de prendre en compte la modification
+			if [[ ${CMD_NOPROXY_USER[$index]} == *"dropbox"* ]]; then
+				echo "#!/bin/bash" >> $TEMP_SCRIPT
+				echo "output=\"\$(${CMD_NOPROXY_USER[$index]})\"" >> $TEMP_SCRIPT
+				echo "if [ \"\$output\" != \"Dropbox is\'nt running!\" ]; then" >> $TEMP_SCRIPT
+				echo "still=10" >> $TEMP_SCRIPT
+				echo "echo 'Dropbox => on attend un peu ...'"  >> $TEMP_SCRIPT
+				echo "while [ \"\$output\" != \"set\" ] && [ \$still -ne 0 ];do" >> $TEMP_SCRIPT
+				echo "echo 'on attend encore un peu ...'"  >> $TEMP_SCRIPT
+				echo "((still--))" >> $TEMP_SCRIPT
+				echo "sleep 1s" >> $TEMP_SCRIPT
+				echo "output=\"\$(${CMD_NOPROXY_USER[$index]})\"" >> $TEMP_SCRIPT
+				echo "done"  >> $TEMP_SCRIPT
+				echo "if [ \$still -eq 0 ]; then" >> $TEMP_SCRIPT
+				echo "echo \"Impossible d'arrêter Dropbox\"" >> $TEMP_SCRIPT
+				echo "fi" >> $TEMP_SCRIPT
+				echo "else"  >> $TEMP_SCRIPT
+				echo "dropbox start"  >> $TEMP_SCRIPT
+				echo "output=\"\$(${CMD_NOPROXY_USER[$index]})\"" >> $TEMP_SCRIPT
+				echo "fi"  >> $TEMP_SCRIPT
+				echo "echo 'Dropbox est paramétré ...'"  >> $TEMP_SCRIPT
+			else
+				echo  "${CMD_NOPROXY_USER[$index]}" >> $TEMP_SCRIPT
+			fi
+		done
+
+		# Lancement du script
+		su $ME $TEMP_SCRIPT
+	else
+		echo "Pas de commande supplémentaire à éxecuter"
+	fi
+fi
+
+if [ -f "$TEMP_SCRIPT" ]; then
+	echo "Suppression du script temporaire"
+	rm $TEMP_SCRIPT
+fi
+
+echo "Fin des traitements"

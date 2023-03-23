@@ -1,0 +1,244 @@
+dn: dc=allier,dc=fr
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+o: allier fr
+dc: allier
+structuralObjectClass: organization
+entryUUID: 564ea6e0-d8fe-1038-9a9f-294b57574535
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190312103545Z
+entryCSN: 20190312103545.208429Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190312103545Z
+
+dn: cn=manager,dc=allier,dc=fr
+objectClass: organizationalRole
+cn: manager
+description: LDAP Directory Manager
+structuralObjectClass: organizationalRole
+entryUUID: 5650b980-d8fe-1038-9aa0-294b57574535
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190312103545Z
+entryCSN: 20190312103545.222030Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190312103545Z
+
+dn: ou=users,dc=allier,dc=fr
+ou: users
+objectClass: organizationalUnit
+objectClass: top
+structuralObjectClass: organizationalUnit
+entryUUID: b3d81c9c-daa7-1038-91e5-939cca3c40d9
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314132038Z
+entryCSN: 20190314132038.247503Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314132038Z
+
+dn: ou=cd03,ou=users,dc=allier,dc=fr
+objectClass: organizationalUnit
+objectClass: top
+structuralObjectClass: organizationalUnit
+entryUUID: d4114ee8-daa7-1038-91e6-939cca3c40d9
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314132132Z
+ou: cd03
+entryCSN: 20190314132153.219791Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314132153Z
+
+dn: ou=exterieur,ou=users,dc=allier,dc=fr
+ou: exterieur
+objectClass: organizationalUnit
+objectClass: top
+structuralObjectClass: organizationalUnit
+entryUUID: f74b03d6-daa7-1038-91e7-939cca3c40d9
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314132231Z
+entryCSN: 20190314132231.407876Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314132231Z
+
+dn: ou=DGS,ou=cd03,ou=users,dc=allier,dc=fr
+ou: DGS
+objectClass: organizationalUnit
+objectClass: top
+objectClass: allierOU
+structuralObjectClass: organizationalUnit
+entryUUID: a3c2c946-daa8-1038-91e8-939cca3c40d9
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314132720Z
+description:: RGlyZWN0aW9uIEfDqW7DqXJhbGUgZGVzIFNlcnZpY2Nlcw==
+entryCSN: 20190314135044.526436Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314135044Z
+
+dn: ou=Elus,ou=cd03,ou=users,dc=allier,dc=fr
+ou: Elus
+objectClass: organizationalUnit
+objectClass: top
+objectClass: allierOU
+structuralObjectClass: organizationalUnit
+entryUUID: af95b0e4-daa8-1038-91e9-939cca3c40d9
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314132740Z
+entryCSN: 20190314135135.382151Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314135135Z
+
+dn: ou=Comptes fonctionnels,ou=users,dc=allier,dc=fr
+ou: Comptes fonctionnels
+objectClass: organizationalUnit
+objectClass: top
+structuralObjectClass: organizationalUnit
+entryUUID: bee81596-daa8-1038-91ea-939cca3c40d9
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314132806Z
+entryCSN: 20190314132806.303837Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314132806Z
+
+dn: ou=Cabinet,ou=Elus,ou=cd03,ou=users,dc=allier,dc=fr
+ou: Cabinet
+objectClass: organizationalUnit
+objectClass: top
+objectClass: allierOU
+structuralObjectClass: organizationalUnit
+entryUUID: 5754a572-daab-1038-9863-db0bba22aa25
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314134641Z
+entryCSN: 20190314135153.410768Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314135153Z
+
+dn: ou=Administration,ou=DGS,ou=cd03,ou=users,dc=allier,dc=fr
+ou: Administration
+objectClass: organizationalUnit
+objectClass: top
+objectClass: allierOU
+structuralObjectClass: organizationalUnit
+entryUUID: 9a675864-daab-1038-9864-db0bba22aa25
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314134833Z
+description:: RGlyZWN0aW9uIEfDqW7DqXJhbGUgZGVzIFNlcnZpY2Nlcw==
+entryCSN: 20190314135057.489573Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314135057Z
+
+dn: ou=DGA-Ressources,ou=DGS,ou=cd03,ou=users,dc=allier,dc=fr
+ou: DGA-Ressources
+objectClass: organizationalUnit
+objectClass: top
+objectClass: allierOU
+structuralObjectClass: organizationalUnit
+entryUUID: cacbee16-daab-1038-9865-db0bba22aa25
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314134954Z
+description:: RGlyZWN0aW9uIEfDqW7DqXJhbGUgQWRqb2ludGUgUmVzc291cmNlcw==
+entryCSN: 20190314135024.178078Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314135024Z
+
+dn: ou=Administration,ou=DGA-Ressources,ou=DGS,ou=cd03,ou=users,dc=allier,dc
+ =fr
+ou: Administration
+description:: RGlyZWN0aW9uIEfDqW7DqXJhbGUgQWRqb2ludGUgUmVzc291cmNlcw==
+objectClass: organizationalUnit
+objectClass: top
+objectClass: allierOU
+structuralObjectClass: organizationalUnit
+entryUUID: 3899021c-daac-1038-9866-db0bba22aa25
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314135258Z
+entryCSN: 20190314135258.957835Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314135258Z
+
+dn: ou=DSUN,ou=DGA-Ressources,ou=DGS,ou=cd03,ou=users,dc=allier,dc=fr
+ou: DSUN
+objectClass: organizationalUnit
+objectClass: top
+objectClass: allierOU
+structuralObjectClass: organizationalUnit
+entryUUID: 4de09252-daac-1038-9867-db0bba22aa25
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314135334Z
+description:: RGlyZWN0aW9uIGRlcyBTZXJ2aWNlcyBldCBVc2FnZXMgTnVtw6lyaXF1ZXM=
+entryCSN: 20190314135349.164439Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314135349Z
+
+dn: ou=Administration,ou=DSUN,ou=DGA-Ressources,ou=DGS,ou=cd03,ou=users,dc=a
+ llier,dc=fr
+ou: Administration
+description:: RGlyZWN0aW9uIGRlcyBTZXJ2aWNlcyBldCBVc2FnZXMgTnVtw6lyaXF1ZXM=
+objectClass: organizationalUnit
+objectClass: top
+objectClass: allierOU
+structuralObjectClass: organizationalUnit
+entryUUID: 7df12baa-daac-1038-9868-db0bba22aa25
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314135455Z
+entryCSN: 20190314135455.298411Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314135455Z
+
+dn: ou=UCS,ou=DSUN,ou=DGA-Ressources,ou=DGS,ou=cd03,ou=users,dc=allier,dc=fr
+ou: UCS
+objectClass: organizationalUnit
+objectClass: top
+objectClass: allierOU
+structuralObjectClass: organizationalUnit
+entryUUID: 9c5d3016-daac-1038-9869-db0bba22aa25
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314135546Z
+description: Service Utilisateurs et Centre de Service
+entryCSN: 20190314135559.748478Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314135559Z
+
+dn: ou=MP,ou=DSUN,ou=DGA-Ressources,ou=DGS,ou=cd03,ou=users,dc=allier,dc=fr
+ou: MP
+objectClass: organizationalUnit
+objectClass: top
+objectClass: allierOU
+structuralObjectClass: organizationalUnit
+entryUUID: b4632ff8-daac-1038-986a-db0bba22aa25
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314135626Z
+description:: U2VydmljZSBNw6l0aG9kZXMgZXQgUHJvamV0cw==
+entryCSN: 20190314135636.576945Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314135636Z
+
+dn: ou=Prod,ou=DSUN,ou=DGA-Ressources,ou=DGS,ou=cd03,ou=users,dc=allier,dc=f
+ r
+ou: Prod
+objectClass: organizationalUnit
+objectClass: top
+objectClass: allierOU
+structuralObjectClass: organizationalUnit
+entryUUID: cbca00f4-daac-1038-986b-db0bba22aa25
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314135705Z
+description: Service Production
+entryCSN: 20190314135713.395223Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314135713Z
+
+dn: ou=MSNE,ou=DSUN,ou=DGA-Ressources,ou=DGS,ou=cd03,ou=users,dc=allier,dc=f
+ r
+ou: MSNE
+objectClass: organizationalUnit
+objectClass: top
+objectClass: allierOU
+structuralObjectClass: organizationalUnit
+entryUUID: 01e81c2a-daad-1038-986c-db0bba22aa25
+creatorsName: cn=manager,dc=allier,dc=fr
+createTimestamp: 20190314135836Z
+description: Mission
+entryCSN: 20190314135840.799731Z#000000#000#000000
+modifiersName: cn=manager,dc=allier,dc=fr
+modifyTimestamp: 20190314135840Z
+
