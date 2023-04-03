@@ -17,7 +17,7 @@
 # Constantes de l'application
 #
 APP_NAME="rmkernel.sh"
-APP_VERSION="0.1.1"
+APP_VERSION="0.1.2"
 
 # Dossier(s) pour les kernel
 KERNEL_FOLDERS=("/boot" "/boot/loader/entries")
@@ -28,6 +28,9 @@ LIB_FOLDER="/usr/lib/modules"
 # Fichier utilisé pour générer la liste des kernels installés
 # autres que le noyau en-cours d'utilisation
 TEMPFILE="./.kernels.txt"
+
+# Ne pas supprimer à partir d'un de ces kernels
+FORBIDDEN_KERNELS=("5.14.11")
 
 #
 # Fonctions à usage interne
@@ -91,17 +94,31 @@ _kernels(){
 
 echo "$APP_NAME version $APP_VERSION"
 
+# Le noyau en-cours d'utilisation
+THISKERNEL=$(uname -r)
+
+# Lancement interdit à partir du noyau courant ?
+found=0
+for item in $FORBIDDEN_KERNELS
+do
+    if [ $(_strpos "$THISKERNEL" "$item" ) -ne -1 ]; then
+        # Trouvé
+        found=1
+    fi
+done
+if [ $found -ne 0 ]; then
+  _exit "Ce script ne peut pas être appelé à partir du noyau '$THISKERNEL'" 3
+fi
+
+_displayVariable "Kernel en cours" $THISKERNEL
+
 # Lancé par root !!!
 if [ $(id -u) -ne 0 ]; then
   _exit "Le script doit être lancé par root" 1
 fi
 
-# Le noyau en-cours d'utilisation
-CURRENT=$(uname -r)
-_displayVariable "Kernel en cours" $CURRENT
-
 # Liste des kernels installés
-if [ $(_kernels $CURRENT $TEMPFILE) -eq 0 ]; then
+if [ $(_kernels $THISKERNEL $TEMPFILE) -eq 0 ]; then
   _exit "Pas de noyau à supprimer" 1
 fi
 
