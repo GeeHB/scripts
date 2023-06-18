@@ -4,7 +4,7 @@
 #
 #	Auteur	: JHB
 #
-# Date    : 23 mars 2023
+# Date    : 3 avril 2023
 #
 #	Description	: Suppression d'un noyau
 #
