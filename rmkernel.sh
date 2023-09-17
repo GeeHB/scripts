@@ -17,7 +17,8 @@
 # Constantes de l'application
 #
 APP_NAME="rmkernel.sh"
-APP_VERSION="0.1.2"
+APP_VERSION="0.1.3"
+APP_AUTHOR="JHB"
 
 # Dossier(s) pour les kernel
 KERNEL_FOLDERS=("/boot" "/boot/loader/entries")
@@ -92,7 +93,7 @@ _kernels(){
 # Script ....
 #
 
-echo "$APP_NAME version $APP_VERSION"
+echo "$APP_NAME version $APP_VERSION par $APP_AUTHOR"
 
 # Le noyau en-cours d'utilisation
 THISKERNEL=$(uname -r)
@@ -166,7 +167,7 @@ cd $LIB_FOLDER
 rm -rf $KERNELVER
 
 # Terminé ...
-echo "{{ Bold \"$KERNEL désinstallé avec succès\"}}" \ | gum format -t template
+echo "{{ Bold \"$KERNEL a été désinstallé avec succès\"}}" \ | gum format -t template
 
 gum confirm --affirmative="Reboot" --negative="Non" "Redémarrer le poste" && reboot 
 
