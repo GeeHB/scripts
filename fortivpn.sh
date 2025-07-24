@@ -19,8 +19,8 @@ VPN_SERVER="nomades.cd03.fr"
 VPN_USER="henry-barnaudiere.j"
 
 # Le certificat
-#VPN_CERT="1c208ce3c636b6d5c099d65b14bab723f3301b1bb70b0b2e5b0d64a90c804405"
-VPN_CERT="b895547d5934872cbd1c2f95fcfcc55d655e7a4ff205a78fde303a68ea86b82d"
+#VPN_CERT="19c83a0bd44147d81e83db13d1e6762f0fda26078420afa1565aaf6fcb9f33b0"
+VPN_CERT="1b9810ab2082c8bb038e794095782e392cc422fe42989473504a28e1e694b514"
 
 # Appel
 openfortivpn "$VPN_SERVER" -u "$VPN_USER" --trusted-cert $VPN_CERT

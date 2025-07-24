@@ -1,23 +1,24 @@
 #!/bin/bash
 
-#             rmkernel.sh
+#       rmkernel.sh
 #
 #	Auteur	: JHB
 #
-# Date    : 3 avril 2023
+# 	Date    : 24 juillet 2025
 #
 #	Description	: Suppression d'un noyau
 #
-#	Remarques : Le script doit être lancé par root 
+#	Remarques : Le script doit être lancé par root
 #
-# Dépendances : charmbracelet::gum - brew install gum
+# 	Dépendances : charmbracelet::gum - brew install gum
 #
 
 #
 # Constantes de l'application
 #
 APP_NAME="rmkernel.sh"
-APP_VERSION="0.1.3"
+APP_VERSION="0.2.2"
+APP_REL_DATE="24 juil. 2025"
 APP_AUTHOR="JHB"
 
 # Dossier(s) pour les kernel
@@ -28,10 +29,13 @@ LIB_FOLDER="/usr/lib/modules"
 
 # Fichier utilisé pour générer la liste des kernels installés
 # autres que le noyau en-cours d'utilisation
-TEMPFILE="./.kernels.txt"
+TEMPFILE="/etc/scripts/.kernels.txt"
 
-# Ne pas supprimer à partir d'un de ces kernels
-FORBIDDEN_KERNELS=("5.14.11")
+# Ces kernels ne doivent pas être supprimés
+UNDELETABLE_KERNELS=("5.14.11")
+
+# Quitter l'application ...
+STR_APP_QUIT="Quitter"
 
 #
 # Fonctions à usage interne
@@ -65,7 +69,7 @@ _exit(){
 #   $1 : Nom du kernel courant
 #   $2 : Nom du fichier qui contiendra la liste
 #
-#   ret : Nombre de kernels trouvés
+#   ret : Nombre de kernels trouvés autres que le noyau en cours
 _kernels(){
   # Suppression du fichier temporaire
   if [ -e $2 ]; then
@@ -86,6 +90,9 @@ _kernels(){
       fi
   done
 
+  # Ajout de l'option de sortie
+  echo $STR_APP_QUIT >> "$TEMPFILE"
+
   echo $count
 }
 
@@ -93,14 +100,14 @@ _kernels(){
 # Script ....
 #
 
-echo "$APP_NAME version $APP_VERSION par $APP_AUTHOR"
+echo "$APP_NAME version $APP_VERSION du $APP_REL_DATE par $APP_AUTHOR"
 
 # Le noyau en-cours d'utilisation
 THISKERNEL=$(uname -r)
 
 # Lancement interdit à partir du noyau courant ?
 found=0
-for item in $FORBIDDEN_KERNELS
+for item in $UNDELETETABLE_KERNELS
 do
     if [ $(_strpos "$THISKERNEL" "$item" ) -ne -1 ]; then
         # Trouvé
@@ -118,57 +125,68 @@ if [ $(id -u) -ne 0 ]; then
   _exit "Le script doit être lancé par root" 1
 fi
 
-# Liste des kernels installés
-if [ $(_kernels $THISKERNEL $TEMPFILE) -eq 0 ]; then
-  _exit "Pas de noyau à supprimer" 1
-fi
+while true; do
+	# Liste des kernels installés
+	if [ $(_kernels $THISKERNEL $TEMPFILE) -eq 0 ]; then
+	  _exit "Pas de noyau à supprimer" 1
+	fi
 
-# Choix du noyau à supprimer
-KERNEL=$(gum choose  < "$TEMPFILE" )
-if [ ${#KERNEL} -gt 0 ]; then
-    gum confirm --affirmative="Oui" --negative="Annuler" "Suppression de $KERNEL" || _exit "Annulé" 1
-else
-    _exit "Annulé" 1
-fi
+	# Choix du noyau à supprimer
+	KERNEL=$(gum choose  < "$TEMPFILE" )
 
-# On continue
-_displayVariable "Suppression" $KERNEL
+	# Sortie de l'application ?'
+	if [ $(_strpos "$KERNEL" "$STR_APP_QUIT") = 0 ]; then
+	   _exit "Terminé" 1
+	else
+    	if [ ${#KERNEL} -gt 0 ]; then
+    	    gum confirm --affirmative="Oui" --negative="Annuler" "Suppression de $KERNEL" || _exit "Annulé" 1
+    	else
+    	    _exit "Annulé" 2
+        fi
+	fi
 
-pos=$(_strpos $KERNEL "-")
-if [ $pos -eq -1 ]; then
-  _exit "Erreur dans le nom du kernel" 2
-fi
+	# On continue
+	_displayVariable "Suppression" $KERNEL
 
-# Desinstallation des paquets
-gum spin -s line --title "Retrait des paquets" -- dnf remove $KERNEL -y
+	pos=$(_strpos $KERNEL "-")
+	if [ $pos -eq -1 ]; then
+	  _exit "Erreur dans le nom du kernel" 2
+	fi
 
-# Nom court
-KERNELVER=${KERNEL#*-}
+	# Desinstallation des paquets
+	gum spin -s line --title "Retrait des paquets" -- dnf remove $KERNEL -y
+	
+	if [ $? -eq 0 ];
+	then
+		# Nom court
+		KERNELVER=${KERNEL#*-}
 
-# Suppression des fichiers "kernel"
-#
-folders=${#KERNEL_FOLDERS[@]}
-if [ $folders -gt 0 ]
-then
-    index=0
-    while [ $index -lt $folders ]; do
-      folder=${KERNEL_FOLDERS[$index]}
+		# Suppression des fichiers "kernel"
+		#
+		folders=${#KERNEL_FOLDERS[@]}
+		if [ $folders -gt 0 ]
+		then
+		    index=0
+		    while [ $index -lt $folders ]; do
+		      folder=${KERNEL_FOLDERS[$index]}
 
-      if [ -d $folder ]; then
-        cd $folder
-        rm -rf *-$KERNELVER*
-      fi
-      index=$((index+1))
-    done
-fi
-    
-## Suppression des librairies
-cd $LIB_FOLDER
-rm -rf $KERNELVER
+		      if [ -d $folder ]; then
+			cd $folder
+			rm -rf *-$KERNELVER*
+		      fi
+		      index=$((index+1))
+		    done
+		fi
 
-# Terminé ...
-echo "{{ Bold \"$KERNEL a été désinstallé avec succès\"}}" \ | gum format -t template
+		## Suppression des librairies
+		cd $LIB_FOLDER
+		rm -rf $KERNELVER
 
-gum confirm --affirmative="Reboot" --negative="Non" "Redémarrer le poste" && reboot 
+		echo $"{{ Bold \"$KERNELVER a été désinstallé avec succès\"}}" \ | gum format -t template
+		echo $'\n'
+	else
+		_exit "Erreur lors de la suppression de $KERNEL" 2	
+	fi	
+done
 
 # EOF
