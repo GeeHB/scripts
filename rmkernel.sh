@@ -4,7 +4,7 @@
 #
 #	Auteur	: JHB
 #
-# 	Date    : 24 juillet 2025
+# 	Date    : 9 sept. 2025
 #
 #	Description	: Suppression d'un noyau
 #
@@ -17,8 +17,8 @@
 # Constantes de l'application
 #
 APP_NAME="rmkernel.sh"
-APP_VERSION="0.2.2"
-APP_REL_DATE="24 juil. 2025"
+APP_VERSION="0.3.1"
+APP_REL_DATE="9 sept. 2025"
 APP_AUTHOR="JHB"
 
 # Dossier(s) pour les kernel
@@ -153,8 +153,14 @@ while true; do
 	  _exit "Erreur dans le nom du kernel" 2
 	fi
 
-	# Desinstallation des paquets
-	gum spin -s line --title "Retrait des paquets" -- dnf remove $KERNEL -y
+	# Desinstallation des paquets du kernel
+	gum spin -s line --title "Retrait des paquets du kernel" -- dnf remove $KERNEL -y
+	
+	# Autres paquets liés au kernel (kernel-devel... kernel-core ... etc)
+	LEFT=$(echo $KERNEL| cut -d'.' -f 1)
+	RIGHT=$(echo $KERNEL|cut -d'.' -f 2)
+	KERNEL_OTHER="${LEFT}-*-${RIGHT}"
+	gum spin -s line --title "Retrait des paquets associés au kernel" -- dnf remove $KERNEL_OTHER -y
 	
 	if [ $? -eq 0 ];
 	then
