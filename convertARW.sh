@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Ajouter une gestion des erreurs : 2>/dev/null
+
 
 EXTENT="ARW"
 FOLDER="jpeg"
